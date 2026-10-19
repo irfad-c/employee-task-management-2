@@ -11,6 +11,6 @@ const port = process.env.PORT;
 app.use("/api/employees", employeeRoutes);
 app.use("/api/tasks", taskRoutes);
 
-app.listen("/", () => {
+app.listen(port, () => {
   console.log(`Server running on ${port}`);
 });
