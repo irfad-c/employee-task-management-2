@@ -18,6 +18,7 @@ CREATE TABLE tasks(
   status ENUM("TODO","IN_PROGRESS","COMPLETED") NOT NULL DEFAULT "TODO" ,
   priority ENUM("LOW","MEDIUM","HIGH") NOT NULL DEFAULT "MEDIUM" ,
   due_date DATE  NOT NULL ,
+  completed_at DATETIME  DEFAULT NULL,
   FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE
 );
 
