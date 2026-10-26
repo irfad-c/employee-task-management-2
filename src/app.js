@@ -11,7 +11,9 @@ app.use(express.json());
 app.use("/api/employees", employeeRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use(errorMiddleware);
+
 const port = process.env.PORT;
+
 app.listen(port, () => {
   console.log(`Server running on ${port}`);
 });

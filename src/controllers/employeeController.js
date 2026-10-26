@@ -1,4 +1,7 @@
-const createEmployeeService = require("../services/employeeService");
+const {
+  calculateWorkloadService,
+  createEmployeeService,
+} = require("../services/employeeService");
 
 async function createEmployee(req, res, next) {
   try {
@@ -10,4 +13,16 @@ async function createEmployee(req, res, next) {
   }
 }
 
-module.exports = createEmployee;
+async function calculateWorkload(req, res, next) {
+  try {
+    const { id } = req.params;
+    const result = await calculateWorkloadService(id);
+    return res
+      .status(200)
+      .json({ messsage: "Task details fetched successfully" });
+  } catch (error) {
+    next(error);
+  }
+}
+
+module.exports = {createEmployee,calculateWorkload};
