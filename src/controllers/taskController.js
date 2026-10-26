@@ -1,4 +1,7 @@
-const createTaskService = require("../services/taskServices");
+const {
+  createTaskService,
+  updateTaskService,
+} = require("../services/taskServices");
 
 async function createTask(req, res, next) {
   const { employee_id, title, status, priority, due_date } = req.body;
@@ -11,6 +14,15 @@ async function createTask(req, res, next) {
   }
 }
 
-async function updateTask(req, res) {}
+async function updateTask(req, res, next) {
+  try {
+    const { status } = req.body;
+    const { id } = req.params;
+    await updateTaskService(id, status);
+    return res.status(200).json({message:"Status updated successfully"})
+  } catch (error) {
+    next(error);
+  }
+}
 
 module.exports = { createTask, updateTask };
