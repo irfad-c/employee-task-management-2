@@ -29,7 +29,6 @@ async function updateTask(req, res, next) {
 async function getTaskSummary(req, res, next) {
   try {
     const data = await getTaskSummaryService();
-    console.log("This is data.", data);
 
     return res
       .status(200)
