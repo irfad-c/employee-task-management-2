@@ -57,4 +57,35 @@ async function updateTaskService(id, status) {
   return true;
 }
 
-module.exports = { createTaskService, updateTaskService };
+async function getTaskSummaryService() {
+  const [rows] = await pool.query(
+    `SELECT e.name AS employee,e.department,
+    
+    COUNT(CASE WHEN t.status!='COMPLETED' THEN 1 END)AS pending_tasks,
+    COUNT(CASE WHEN t.due_date<CURDATE() AND t.status!='COMPLETED' THEN 1 END)AS overdue_tasks,
+    CASE WHEN MAX(CASE WHEN t.status!='COMPLETED' AND t.priority='HIGH' THEN 3 ELSE 0 END)=3 THEN 'HIGH'
+         WHEN MAX(CASE WHEN t.status!='COMPLETED' AND t.priority='MEDIUM' THEN 2 ELSE 0 END)=2 THEN 'MEDIUM'
+         WHEN MAX(CASE WHEN t.status!='COMPLETED' AND t.priority='LOW' THEN 1 ELSE 0 END)=1 THEN 'LOW'
+    ELSE NULL END
+    AS highest_priority
+    
+    FROM employees e INNER JOIN tasks t ON
+
+    e.id=t.employee_id
+
+    GROUP BY e.id,e.name,e.department
+
+    HAVING pending_tasks>0
+
+    ORDER BY overdue_tasks DESC
+    
+    `,
+  );
+  return rows;
+}
+
+module.exports = {
+  createTaskService,
+  updateTaskService,
+  getTaskSummaryService,
+};
