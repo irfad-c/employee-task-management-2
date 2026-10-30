@@ -1,13 +1,13 @@
 const { body } = require("express-validator");
 
 const employeeValidationRules = [
-  body("name").notEmpty().withMessage("Name is required"),
+  body("name").trim().notEmpty().withMessage("Name is required"),
   body("email")
     .notEmpty()
     .withMessage("Email is required")
     .isEmail()
     .withMessage("Please type correct email"),
-  body("department").notEmpty().withMessage("Department is required"),
+  body("department").trim().notEmpty().withMessage("Department is required"),
   body("salary")
     .notEmpty()
     .withMessage("Salary is required")

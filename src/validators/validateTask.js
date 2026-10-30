@@ -6,7 +6,7 @@ const taskValidationRules = [
     .withMessage("Employee_id is required.")
     .isNumeric()
     .withMessage("Employee_id must be a number."),
-  body("title").notEmpty().withMessage("Title is required."),
+  body("title").trim().notEmpty().withMessage("Title is required."),
   body("status")
     .notEmpty()
     .withMessage("Status is required.")
