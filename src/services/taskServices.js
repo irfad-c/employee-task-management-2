@@ -7,31 +7,48 @@ async function createTaskService(
   priority,
   due_date,
 ) {
-  const [row1] = await pool.query("SELECT * FROM employees WHERE id=?", [
-    employee_id,
-  ]);
-  if (row1.length === 0) {
-    const error = new Error("No employee exist for this employee_id");
-    error.statusCode = 404;
+  // Gets a connection from the pool
+  const connection = await pool.getConnection();
+  try {
+    // Starts a database transaction
+    await connection.beginTransaction();
+    // 	Locks the employee row so competing requests for that employee must wait.
+    const [employeeRows] = await connection.query(
+      "SELECT id  FROM employees WHERE id=? FOR UPDATE",
+      [employee_id],
+    );
+    if (employeeRows.length === 0) {
+      const error = new Error("Employee didn't exist for this employee_id");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    const [row2] = await connection.query(
+      "SELECT COUNT(*)AS activeTasks FROM tasks WHERE status!='COMPLETED' AND employee_id=?",
+      [employee_id],
+    );
+
+    if (Number(row2[0].activeTasks) >= 7) {
+      const error = new Error("Active task limit reached");
+      error.statusCode = 400;
+      throw error;
+    }
+
+    const [data] = await connection.query(
+      "INSERT INTO tasks (employee_id,title,status,priority,due_date) VALUES(?,?,?,?,?)",
+      [employee_id, title, status, priority, due_date],
+    );
+    // Confirms the transaction's changes when everything succeeds.
+    await connection.commit();
+    return data;
+  } catch (error) {
+    // Cancels the transaction's changes if something fails.
+    await connection.rollback();
     throw error;
+  } finally {
+    // Returns the connection to the pool so another request can reuse it.
+    connection.release();
   }
-
-  const [row2] = await pool.query(
-    "SELECT COUNT(*)AS activeTasks FROM tasks WHERE status!='COMPLETED' AND employee_id=?",
-    [employee_id],
-  );
-
-  if (row2[0].activeTasks >= 7) {
-    const error = new Error("Active task limit reached");
-    error.statusCode = 400;
-    throw error;
-  }
-
-  const data = await pool.query(
-    "INSERT INTO tasks (employee_id,title,status,priority,due_date) VALUES(?,?,?,?,?)",
-    [employee_id, title, status, priority, due_date],
-  );
-  return data;
 }
 
 async function updateTaskService(id, status) {
