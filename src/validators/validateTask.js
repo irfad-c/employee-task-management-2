@@ -21,7 +21,7 @@ const taskValidationRules = [
     .notEmpty()
     .withMessage("Due date is required")
     .isDate()
-    .withMessage("Due_date must be a date.")
+    .withMessage("Due_date must be a date in the format YYYY-MM-DD")
     .custom((value) => {
       if (new Date(value) <= new Date()) {
         throw new Error("Due date must be in the future.");
