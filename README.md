@@ -24,4 +24,41 @@ A backend application for managing employees and their tasks, built using Node.j
    ```bash
    npm run dev
    ```
+## API documentation
 
+POST requests
+
+/api/employees (To create new employee) 
+
+/api/tasks (To create new task)
+
+GET requests
+
+/api/tasks/summary (To get task summary)
+
+/api/employees/1/workload (To get workload)
+
+PATCH request
+
+/api/tasks/1/status (To update the status)
+
+Example inputs
+
+Create employee
+
+{
+    "salary":"880000",
+    "department":"IT",
+    "name":"Google",
+    "email":"Google@gmail.com"
+}
+
+Create task
+
+{
+    "title":"Trying",
+    "status":"IN_PROGRESS",
+    "priority":"HIGH",
+    "due_date":"2026-11-19",
+    "employee_id":"1"
+}
