@@ -1,4 +1,4 @@
-const { body } = require("express-validator");
+const { body, param } = require("express-validator");
 
 const taskValidationRules = [
   body("employee_id")
@@ -30,4 +30,13 @@ const taskValidationRules = [
     }),
 ];
 
-module.exports = taskValidationRules;
+const taskStatusValidationRules = [
+  param("id").isInt({ min: 1 }).withMessage("Id must be a positive interger "),
+  body("status")
+    .notEmpty()
+    .withMessage("Status required.")
+    .isIn(["IN_PROGRESS", "COMPLETED"])
+    .withMessage("Status must be IN_PROGRESS/COMPLETED."),
+];
+
+module.exports = { taskValidationRules, taskStatusValidationRules };

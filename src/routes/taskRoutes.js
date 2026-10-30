@@ -4,7 +4,10 @@ const {
   updateTask,
   getTaskSummary,
 } = require("../controllers/taskController.js");
-const validateTask = require("../validators/validateTask.js");
+const {
+  taskValidationRules,
+  taskStatusValidationRules,
+} = require("../validators/validateTask.js");
 const handleValidationErrors = require("../middlewares/validatorMiddleware.js");
 const authMiddleware = require("../middlewares/authMiddleware.js");
 
@@ -13,11 +16,17 @@ const router = express.Router();
 router.post(
   "/",
   authMiddleware,
-  validateTask,
+  taskValidationRules,
   handleValidationErrors,
   createTask,
 );
-router.patch("/:id/status", authMiddleware, updateTask);
+router.patch(
+  "/:id/status",
+  authMiddleware,
+  taskStatusValidationRules,
+  handleValidationErrors,
+  updateTask,
+);
 router.get("/summary", getTaskSummary);
 
 module.exports = router;
